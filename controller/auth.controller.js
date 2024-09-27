@@ -33,38 +33,41 @@ export const signup = async (req, res, next) => {
 }
 
 export const signin = async (req, res, next) => {
-  const { email, password } = req.body
+  const { email, password } = req.body;
   
   try {
-    const validUser = await User.findOne({ email })
+    const validUser = await User.findOne({ email });
     
     if (!validUser) {
-      return next(errorHandler(404, "User not found"))
+      return next(errorHandler(404, "User not found"));
     }
     
-    const validPassword = bcryptjs.compareSync(password, validUser.password)
+    const validPassword = bcryptjs.compareSync(password, validUser.password);
     
     if (!validPassword) {
-      return next(errorHandler(401, "Wrong Credentials"))
+      return next(errorHandler(401, "Wrong Credentials"));
     }
     
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET)
-    console.log(req.body)
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    
+    const { password: pass, ...rest } = validUser._doc;
 
-    const { password: pass, ...rest } = validUser._doc
-
-    res.cookie("access_token", token, { httpOnly: true }).status(200).json({
-      success: true,
+    res.cookie("access_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "None", // Allows cross-site requests
+      secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+      sameSite: "None", // Allow cross-site requests
+    })
+    .status(200)
+    .json({
+      success: true,
       message: "Login Successful!",
       rest,
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
 
 export const signout = async (req, res, next) => {
   try {
