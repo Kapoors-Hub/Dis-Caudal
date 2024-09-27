@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 // CORS configuration
 const corsOptions = {
-  origin: ["http://localhost:5173"],  // Specify your frontend origin here
+  origin: ["http://localhost:5173","https://dips-frontend.vercel.app"],  // Specify your frontend origin here
   credentials: true,  // Allow cookies to be sent across domains
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
